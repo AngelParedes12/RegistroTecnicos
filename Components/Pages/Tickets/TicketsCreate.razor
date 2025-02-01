@@ -1,0 +1,110 @@
+﻿@page "/Tickets/Create"
+@rendermode InteractiveServer
+@inject TicketsService ticketsService
+@inject ClienteService clienteService
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>Crear nuevo ticket</PageTitle>
+<EditForm Model="ticket" OnValidSubmit="Crear">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@ 
+            <div class="card-header bg-primary text-white text-center">
+                <h2><strong>Crear nuevo ticket</strong></h2>
+            </div>
+            @*Body*@ 
+            <div class="card-body">
+
+                <label class="form-label" for="id"><strong>Ticket ID</strong></label>
+                <InputNumber id="id" class="form-control" @bind-Value="ticket.TicketId" READONLY></InputNumber>
+
+                <label class="form-label" for="fecha"><strong>Fecha</strong></label>
+                <InputDate id="fecha" class="form-control" @bind-Value="ticket.Fecha"></InputDate>
+                <ValidationMessage For="@(() => ticket.Fecha)"></ValidationMessage>
+
+                <label class="form-label" for="prioridad"><strong>Prioridad</strong></label>
+                <InputText id="prioridad" class="form-control" @bind-Value="ticket.Prioridad"></InputText>
+                <ValidationMessage For="@(() => ticket.Prioridad)"></ValidationMessage>
+
+                <label class="form-label" for="clienteId"><strong>Cliente</strong></label>
+                <InputSelect id="clienteId" class="form-control" @bind-Value="ticket.ClienteId">
+                    <option value="">Seleccione un cliente</option>
+                    @if (ListaClientes != null)
+                    {
+                        foreach (var cliente in ListaClientes)
+                        {
+                            <option value="@cliente.ClienteId">@cliente.Nombres</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => ticket.ClienteId)"></ValidationMessage>
+
+                <label class="form-label" for="asunto"><strong>Asunto</strong></label>
+                <InputText id="asunto" class="form-control" @bind-Value="ticket.Asunto"></InputText>
+                <ValidationMessage For="@(() => ticket.Asunto)"></ValidationMessage>
+
+                <label class="form-label" for="descripcion"><strong>Descripción</strong></label>
+                <InputTextArea id="descripcion" class="form-control" @bind-Value="ticket.Descripcion"></InputTextArea>
+                <ValidationMessage For="@(() => ticket.Descripcion)"></ValidationMessage>
+
+                <label class="form-label" for="tiempo"><strong>Tiempo Invertido</strong></label>
+                <InputNumber id="tiempo" class="form-control" @bind-Value="ticket.TiempoInvertido"></InputNumber>
+                <ValidationMessage For="@(() => ticket.TiempoInvertido)"></ValidationMessage>
+
+                <label class="form-label" for="tecnicoId"><strong>Técnico Asignado</strong></label>
+                <InputSelect id="tecnicoId" class="form-control" @bind-Value="ticket.TecnicoId">
+                    <option value="">Seleccione un técnico</option>
+                    @if (ListaTecnicos != null)
+                    {
+                        foreach (var tecnico in ListaTecnicos)
+                        {
+                            <option value="@tecnico.TecnicoId">@tecnico.Nombres</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => ticket.TecnicoId)"></ValidationMessage>
+            </div>
+
+            <div class="card-footer text-center">
+                <a type="button" href="/Tickets/TicketsIndex" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Volver </a>
+                <button type="submit" class="btn btn-success bi bi-floppy-fill">  Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Ticket ticket { get; set; } = new Ticket();
+    public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
+    public string Mensaje { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaClientes = await clienteService.Listar(c => true);
+        ListaTecnicos = await tecnicoService.Listar(t => true);
+    }
+
+    public async Task Crear()
+    {
+        if (!await Validar())
+        {
+            await ticketsService.Guardar(ticket);
+            Mensaje = "Ticket guardado correctamente.";
+            navigation.NavigateTo("/Tickets/TicketsIndex");
+        }
+        else
+        {
+            Mensaje = "El ticket ya existe con el mismo asunto.";
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existeTicket = await ticketsService.Listar(t => t.Asunto == ticket.Asunto);
+        return existeTicket.Any();
+    }
+}

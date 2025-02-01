@@ -1,0 +1,124 @@
+﻿@page "/Tickets/TicketsIndex"
+@rendermode InteractiveServer
+@inject TicketsService ticketsService
+@inject NavigationManager navigation
+
+<PageTitle>Tickets</PageTitle>
+<div class="container">
+
+    <div class="card shadow-lg">
+        @*Header*@ 
+        <div class="card-header bg-primary text-white text-center">
+            <h3><strong>Tickets</strong></h3>
+        </div>
+        <div class="row p-3">
+            <div class="col-md-5">
+                <label for="Filtro" class="form-label"><strong>Filtrar por:</strong></label>
+                <InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+                    <option value="" disabled>Seleccionar</option>
+                    <option value="TicketId">TicketId</option>
+                    <option value="ClienteId">ClienteId</option>
+                    <option value="Asunto">Asunto</option>
+                    <option value="Prioridad">Prioridad</option>
+                    <option value="TecnicoId">TecnicoId</option>
+                </InputSelect>
+            </div>
+            <div class="col-md-7">
+                <label for="ValorFiltro" class="form-label"><strong>Búsqueda:</strong></label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class="btn btn-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button> 
+                </div>
+            </div>
+
+            <div class="text-left">
+                <a href="/Tickets/Create" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
+            </div>
+        </div>
+        @*Body*@ 
+        <div class="card-body">
+            <table class="table table-bordered text-center">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th>TicketId</th>
+                        <th>Fecha</th>
+                        <th>Prioridad</th>
+                        <th>ClienteId</th>
+                        <th>Asunto</th>
+                        <th>Descripción</th>
+                        <th>Tiempo Invertido</th>
+                        <th>TecnicoId</th>
+                        <th>Modificar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in tickets)
+                    {
+                        <tr>
+                            <td>@ticket.TicketId</td>
+                            <td>@ticket.Fecha.ToString("dd/MM/yyyy")</td>
+                            <td>@ticket.Prioridad</td>
+                            <td>@ticket.ClienteId</td>
+                            <td>@ticket.Asunto</td>
+                            <td>@ticket.Descripcion</td>
+                            <td>@ticket.TiempoInvertido</td>
+                            <td>@ticket.TecnicoId</td>
+
+                            <td class="text-center">
+                                <a href="/Tickets/Edit/@ticket.TicketId" class="btn btn-secondary bi bi-pencil-fill btn-radius"></a>
+                            </td>
+                            <td class="text-center">
+                                <a href="/Tickets/Delete/@ticket.TicketId" class="btn btn-danger bi bi-trash-fill btn-radius"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    public List<Ticket> tickets = new List<Ticket>();
+    private string filtro = "";
+    private string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        tickets = await ticketsService.Listar(t => t.TicketId > 0);
+    }
+
+    private async Task Buscar()
+    {
+        if (!string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            if (filtro == "TicketId" && int.TryParse(valorFiltro, out int TicketId))
+            {
+                tickets = await ticketsService.Listar(t => t.TicketId == TicketId);
+            }
+            else if (filtro == "ClienteId" && int.TryParse(valorFiltro, out int ClienteId))
+            {
+                tickets = await ticketsService.Listar(t => t.ClienteId == ClienteId);
+            }
+            else if (filtro == "Asunto")
+            {
+                tickets = await ticketsService.Listar(t => t.Asunto.ToLower().Contains(valorFiltro.ToLower()));
+            }
+            else if (filtro == "Prioridad")
+            {
+                tickets = await ticketsService.Listar(t => t.Prioridad.ToLower().Contains(valorFiltro.ToLower()));
+            }
+            else if (filtro == "TecnicoId" && int.TryParse(valorFiltro, out int TecnicoId))
+            {
+                tickets = await ticketsService.Listar(t => t.TecnicoId == TecnicoId);
+            }
+        }
+        else
+        {
+            tickets = await ticketsService.Listar(t => true);
+        }
+    }
+}
