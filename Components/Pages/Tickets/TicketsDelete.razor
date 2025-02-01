@@ -1,0 +1,87 @@
+﻿@page "/Ticket/Delete/{ticketId:int}"
+@inject TicketsService ticketsService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Ticket</PageTitle>
+
+@if (ticket != null)
+{
+    <div class="card-header bg-primary text-white text-center">
+        <h3><strong>Eliminar Ticket</strong></h3>
+    </div>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h5><strong>¿Estás seguro de que quieres eliminar este ticket?</strong></h5>
+                <div class="mb-1">
+                    <p class="mb-0">Ticket ID: @ticket.TicketId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Fecha: @ticket.Fecha.ToShortDateString()</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Prioridad: @ticket.Prioridad</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Cliente ID: @ticket.ClienteId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Asunto: @ticket.Asunto</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Descripción: @ticket.Descripción</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Tiempo Invertido: @ticket.TiempoInvertido</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Técnico ID: @ticket.TecnicoId</p>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a type="button" href="/Ticket/TicketIndex" class="btn btn-outline-danger">
+                    <span class="bi bi-arrow-bar-left"></span> Volver
+                </a>
+                <button type="button" class="btn btn-danger bi bi-trash-fill" @onclick="Eliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se encontró ningún ticket con ese ID</p>
+}
+
+<div>@Mensaje</div>
+
+@code {
+    [Parameter]
+    public int ticketId { get; set; }
+    public Ticket ticket { get; set; }
+    public string Mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ticketId > 0)
+        {
+            ticket = await ticketsService.Buscar(ticketId);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (ticket != null)
+        {
+            var eliminado = await ticketsService.Eliminar(ticketId);
+            if (eliminado)
+            {
+                navigation.NavigateTo("/Ticket/TicketIndex");
+            }
+            else
+            {
+                Mensaje = "Error, el ticket no pudo ser eliminado";
+            }
+        }
+    }
+}
