@@ -1,0 +1,98 @@
+﻿@page "/Ticket/Edit/{ticketId:int}"
+@inject TicketsService ticketsService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Editar Ticket</PageTitle>
+
+@if (ticket != null)
+{
+    <div class="card-header bg-primary text-white text-center">
+        <h3><strong>Editar Ticket</strong></h3>
+    </div>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">Ticket ID:</label>
+                    <input class="form-control" disabled value="@ticket.TicketId" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Fecha:</label>
+                    <input type="date" class="form-control" @bind="ticket.Fecha" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Prioridad:</label>
+                    <select class="form-select" @bind="ticket.Prioridad">
+                        <option value="Baja">Baja</option>
+                        <option value="Media">Media</option>
+                        <option value="Alta">Alta</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Cliente ID:</label>
+                    <input type="number" class="form-control" @bind="ticket.ClienteId" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Asunto:</label>
+                    <input class="form-control" @bind="ticket.Asunto" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción:</label>
+                    <textarea class="form-control" @bind="ticket.Descripción"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tiempo Invertido:</label>
+                    <input type="text" class="form-control" @bind="ticket.TiempoInvertido" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Técnico ID:</label>
+                    <input type="number" class="form-control" @bind="ticket.TecnicoId" />
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a type="button" href="/Ticket/TicketIndex" class="btn btn-outline-danger">
+                    <span class="bi bi-arrow-bar-left"></span> Volver
+                </a>
+                <button type="button" class="btn btn-success bi bi-save-fill" @onclick="Guardar">Guardar</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se encontró ningún ticket con ese ID</p>
+}
+
+<div>@Mensaje</div>
+
+@code {
+    [Parameter]
+    public int ticketId { get; set; }
+    public Ticket ticket { get; set; } = new Ticket();
+    public string Mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ticketId > 0)
+        {
+            ticket = await ticketsService.Buscar(ticketId);
+        }
+    }
+
+    public async Task Guardar()
+    {
+        if (ticket != null)
+        {
+            var guardado = await ticketsService.Guardar(ticket);
+            if (guardado)
+            {
+                navigation.NavigateTo("/Ticket/TicketIndex");
+            }
+            else
+            {
+                Mensaje = "Error, el ticket no pudo ser guardado";
+            }
+        }
+    }
+}
