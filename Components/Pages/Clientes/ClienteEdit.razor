@@ -1,0 +1,140 @@
+﻿@page "/Cliente/Edit/{clientesId:int}"
+@rendermode InteractiveServer
+@inject ClienteService clienteService
+@inject NavigationManager navigation
+
+<PageTitle>Editar cliente</PageTitle>
+<EditForm Model="cliente" OnValidSubmit="Modificar">
+    <DataAnnotationsValidator />
+    <Toasts class="p-3" Messages="MensajeToast" Placement="ToastsPlacement.TopRight" />
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@
+            <div class="card-header bg-primary text-white">
+                <h2><strong>Modificar cliente</strong></h2>
+            </div>
+            @*Body*@
+            <div class="card-body">
+                @*Id*@
+                <label class="form-label" for="id"><strong>ClienteId</strong></label>
+                <InputNumber id="id" class="form-control" @bind-Value="cliente.ClienteId" readonly></InputNumber>
+
+                @*Fecha de Ingreso*@
+                <label class="form-label" for="fecha"><strong>Fecha de Ingreso</strong></label>
+                <InputDate id="fecha" class="form-control" @bind-Value="cliente.FechaIngreso"></InputDate>
+                <ValidationMessage For="@(() => cliente.FechaIngreso)"></ValidationMessage>
+
+                @*Nombres*@
+                <label class="form-label" for="nombres"><strong>Nombres</strong></label>
+                <InputText id="nombres" class="form-control" @bind-Value="cliente.Nombres"></InputText>
+                <ValidationMessage For="@(() => cliente.Nombres)"></ValidationMessage>
+
+                @*Dirección*@
+                <label class="form-label" for="direccion"><strong>Dirección</strong></label>
+                <InputText id="direccion" class="form-control" @bind-Value="cliente.Direccion"></InputText>
+                <ValidationMessage For="@(() => cliente.Direccion)"></ValidationMessage>
+
+                @*RNC*@
+                <label class="form-label" for="rnc"><strong>RNC</strong></label>
+                <InputText id="rnc" class="form-control" @bind-Value="cliente.Rnc"></InputText>
+                <ValidationMessage For="@(() => cliente.Rnc)"></ValidationMessage>
+
+                @*Límite de Crédito*@
+                <label class="form-label" for="limite"><strong>Límite de Crédito</strong></label>
+                <InputNumber id="limite" class="form-control" @bind-Value="cliente.LimiteCredito"></InputNumber>
+                <ValidationMessage For="@(() => cliente.LimiteCredito)"></ValidationMessage>
+
+                @*Técnico encargado*@
+                <label class="form-label" for="tecnicoId"><strong>Técnico encargado</strong></label>
+                <InputSelect id="tecnicoId" class="form-control" @bind-Value="cliente.TecnicoId">
+                    <option value="">Seleccione un técnico</option>
+                    @foreach (var tecnico in Tecnicos)
+                    {
+                        <option value="@tecnico.Id">@tecnico.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => cliente.TecnicoId)"></ValidationMessage>
+
+            </div>
+            @*Footer*@
+            <div class="card-footer text-center">
+                <a type="button" href="/Cliente/ClienteIndex" class="btn btn-outline-danger">
+                    <span class="bi bi-arrow-bar-left"></span> Volver
+                </a>
+                <button type="submit" class="btn btn-success bi bi-pencil-fill"> Modificar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int clientesId { get; set; }
+    public Clientes cliente { get; set; } = new Clientes();
+    public bool NombreRepetido { get; set; }
+    private List<Tecnico> Tecnicos { get; set; } = new List<Tecnico>();
+    List<ToastMessage> MensajeToast = new List<ToastMessage>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (clientesId > 0)
+        {
+            cliente = await clienteService.Buscar(clientesId);
+        }
+
+        // Cargar la lista de técnicos (simulada o desde un servicio)
+        Tecnicos = await CargarTecnicos();
+    }
+
+    private async Task<List<Tecnico>> CargarTecnicos()
+    {
+        // Aquí podrías llamar a un servicio para obtener los técnicos
+        // Simulación de datos
+        return await Task.FromResult(new List<Tecnico>
+        {
+            new Tecnico { Id = 1, Nombre = "Técnico 1" },
+            new Tecnico { Id = 2, Nombre = "Técnico 2" },
+        });
+    }
+
+    private ToastMessage CreateToastMessage(ToastType toastType, string mensaje)
+    => new ToastMessage
+        {
+            Type = toastType,
+            Title = "Notificación",
+            HelpText = $"{DateTime.Now}",
+            Message = mensaje,
+        };
+
+    private void Mensaje(ToastType toastType, string mensaje)
+    {
+        MensajeToast.Add(CreateToastMessage(toastType, mensaje));
+    }
+
+    public async Task Modificar()
+    {
+        if (!await Validar())
+        {
+            await clienteService.Guardar(cliente);
+            Mensaje(ToastType.Success, "Cliente modificado correctamente.");
+        }
+        else
+        {
+            Mensaje(ToastType.Danger, "Ya existe un cliente con ese nombre.");
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existeCliente = await clienteService.Listar(c => c.Nombres == cliente.Nombres);
+
+        NombreRepetido = existeCliente.Any();
+        return NombreRepetido;
+    }
+
+    public class Tecnico
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; }
+    }
+}

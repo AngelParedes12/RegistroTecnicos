@@ -1,0 +1,102 @@
+﻿@page "/Cliente/Create"
+@rendermode InteractiveServer
+@inject ClienteService clienteService
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigation
+
+<PageTitle>Guardar nuevo cliente</PageTitle>
+<EditForm Model="cliente" OnValidSubmit="Crear">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="card shadow-lg">
+            @*Header*@ 
+            <div class="card-header bg-primary text-white text-center">
+                <h2><strong>Crear nuevo cliente</strong></h2>
+            </div>
+            @*Body*@ 
+            <div class="card-body">
+                @*Id*@ 
+                <label class="form-label" for="id"><strong>ClienteId</strong></label>
+                <InputNumber id="id" class="form-control" @bind-Value="cliente.ClienteId" READONLY></InputNumber>
+
+                @*FechaIngreso*@ 
+                <label class="form-label" for="fechaIngreso"><strong>Fecha de ingreso</strong></label>
+                <InputDate id="fechaIngreso" class="form-control" @bind-Value="cliente.FechaIngreso"></InputDate>
+                <ValidationMessage For="@(() => cliente.FechaIngreso)"></ValidationMessage>
+
+                @*Nombres*@ 
+                <label class="form-label" for="nombres"><strong>Nombres</strong></label>
+                <InputText id="nombres" class="form-control" @bind-Value="cliente.Nombres"></InputText>
+                <ValidationMessage For="@(() => cliente.Nombres)"></ValidationMessage>
+
+                @*Direccion*@ 
+                <label class="form-label" for="direccion"><strong>Dirección</strong></label>
+                <InputText id="direccion" class="form-control" @bind-Value="cliente.Direccion"></InputText>
+                <ValidationMessage For="@(() => cliente.Direccion)"></ValidationMessage>
+
+                @*RNC*@ 
+                <label class="form-label" for="rnc"><strong>RNC</strong></label>
+                <InputText id="rnc" class="form-control" @bind-Value="cliente.Rnc"></InputText>
+                <ValidationMessage For="@(() => cliente.Rnc)"></ValidationMessage>
+
+                @*LimiteCredito*@ 
+                <label class="form-label" for="limiteCredito"><strong>Límite de Crédito</strong></label>
+                <InputNumber id="limiteCredito" class="form-control" @bind-Value="cliente.LimiteCredito"></InputNumber>
+                <ValidationMessage For="@(() => cliente.LimiteCredito)"></ValidationMessage>
+
+                @*TecnicoId*@ 
+                <label class="form-label" for="tecnicoId"><strong>Técnico Encargado</strong></label>
+                <InputSelect id="tecnicoId" class="form-control" @bind-Value="cliente.TecnicoId">
+                    <option value="">Seleccione un técnico</option>
+                    @if (ListaTecnicos != null)
+                    {
+                        foreach (var tecnico in ListaTecnicos)
+                        {
+                            <option value="@tecnico.TecnicoId">@tecnico.Nombres</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => cliente.TecnicoId)"></ValidationMessage>
+            </div>
+            @*Footer*@ 
+            <div class="card-footer text-center">
+                <a type="button" href="/Cliente/ClienteIndex" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Volver </a>
+                <button type="submit" class="btn btn-success bi bi-floppy-fill">  Guardar</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public Clientes cliente { get; set; } = new Clientes();
+    public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
+    public string Mensaje { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTecnicos = await tecnicoService.Listar(t => true);
+    }
+
+    public async Task Crear()
+    {
+        if (!await Validar())
+        {
+            await clienteService.Guardar(cliente);
+            Mensaje = "Cliente guardado correctamente.";
+
+            
+            navigation.NavigateTo("/Cliente/ClienteIndex");
+        }
+        else
+        {
+            Mensaje = "El cliente ya existe con el mismo nombre o RNC.";
+        }
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existeCliente = await clienteService.Listar(c => c.Nombres == cliente.Nombres || c.Rnc == cliente.Rnc);
+        return existeCliente.Any();
+    }
+}
