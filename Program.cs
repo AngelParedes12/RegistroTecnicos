@@ -9,17 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-//Inyeccción del contexto
+// Inyección del contexto
 var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
 
 builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 builder.Services.AddBlazorBootstrap();
 
-//Inyeccción del service
+// Inyección de servicios
 builder.Services.AddScoped<TecnicoService>();
+builder.Services.AddScoped<ClienteService>(); 
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -30,8 +30,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-
 app.UseAntiforgery();
 
 app.MapStaticAssets();
