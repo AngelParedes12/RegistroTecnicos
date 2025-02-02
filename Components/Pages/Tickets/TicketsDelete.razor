@@ -1,4 +1,4 @@
-﻿@page "/Ticket/Delete/{ticketId:int}"
+﻿@page "/Ticket/Delete/{ticketsId:int}"
 @inject TicketsService ticketsService
 @inject NavigationManager navigation
 @rendermode InteractiveServer
@@ -30,7 +30,7 @@
                     <p class="mb-0">Asunto: @ticket.Asunto</p>
                 </div>
                 <div class="mb-1">
-                    <p class="mb-0">Descripción: @ticket.Descripción</p>
+                    <p class="mb-0">Descripción: @ticket.Descripcion</p>
                 </div>
                 <div class="mb-1">
                     <p class="mb-0">Tiempo Invertido: @ticket.TiempoInvertido</p>
@@ -57,15 +57,15 @@ else
 
 @code {
     [Parameter]
-    public int ticketId { get; set; }
-    public Ticket ticket { get; set; }
+    public int ticketsId { get; set; }
+    public Tickets ticket { get; set; }
     public string Mensaje = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        if (ticketId > 0)
+        if (ticketsId > 0)
         {
-            ticket = await ticketsService.Buscar(ticketId);
+            ticket = await ticketsService.Buscar(ticketsId);
         }
     }
 
@@ -73,7 +73,7 @@ else
     {
         if (ticket != null)
         {
-            var eliminado = await ticketsService.Eliminar(ticketId);
+            var eliminado = await ticketsService.Eliminar(ticketsId);
             if (eliminado)
             {
                 navigation.NavigateTo("/Ticket/TicketIndex");
