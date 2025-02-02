@@ -76,8 +76,8 @@ public class TicketsService(IDbContextFactory<Contexto> DbFactory)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Tickets
-            .Include(t => t.Clientes) // Incluir datos del cliente
-            .Include(t => t.Tecnicos) // Incluir datos del técnico
+            .Include(t => t.Clientes)
+            .Include(t => t.Tecnicos) 
             .Where(criterio)
             .AsNoTracking()
             .ToListAsync();

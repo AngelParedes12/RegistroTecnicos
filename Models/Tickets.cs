@@ -1,47 +1,35 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using static RegistroTecnicos.Components.Pages.Clientes.ClienteEdit;
 
 namespace RegistroTecnicos.Models
 {
-    public enum Prioridad
-    {
-        Baja,
-        Media,
-        Alta,
-        Urgente
-    }
-
     public class Tickets
     {
-        [Key]
         public int TicketId { get; set; }
 
-        [Required(ErrorMessage = "La fecha es requerida.")]
+        [Required(ErrorMessage = "La fecha es obligatoria.")]
         public DateTime Fecha { get; set; } = DateTime.Now;
 
-        [Required(ErrorMessage = "La prioridad es requerida.")]
-        public Prioridad Prioridad { get; set; } = Prioridad.Media;
+        [Required(ErrorMessage = "La prioridad es obligatoria.")]
+        public string Prioridad { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "El ClienteId es requerido.")]
-        [Range(1, int.MaxValue, ErrorMessage = "El ClienteId debe ser mayor que 0.")]
+        [Required(ErrorMessage = "El ID del cliente es obligatorio.")]
         public int ClienteId { get; set; }
 
-        public Clientes? Cliente { get; set; } // Propiedad de navegación
+        [Required(ErrorMessage = "El asunto es obligatorio.")]
+        public string Asunto { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "El asunto es requerido.")]
-        [StringLength(100, MinimumLength = 5, ErrorMessage = "El asunto debe tener entre 5 y 100 caracteres.")]
-        public string Asunto { get; set; }
+        public string? Descripcion { get; set; }
 
-        [Required(ErrorMessage = "La descripción es requerida.")]
-        [StringLength(500, MinimumLength = 10, ErrorMessage = "La descripción debe tener entre 10 y 500 caracteres.")]
-        public string Descripcion { get; set; }
-
-        [Range(0, double.MaxValue, ErrorMessage = "El tiempo invertido no puede ser negativo.")]
+        [Range(0, double.MaxValue, ErrorMessage = "El tiempo invertido debe ser un valor positivo.")]
         public double TiempoInvertido { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "El TecnicoId debe ser mayor que 0.")]
-        public int? TecnicoId { get; set; }
+        [Required(ErrorMessage = "El ID del técnico es obligatorio.")]
+        public int TecnicoId { get; set; }
 
-        public Tecnicos? Tecnico { get; set; } // Propiedad de navegación
+        
+        public Clientes? Cliente { get; set; }
+        public Tecnicos? Tecnico { get; set; }
+        public object Clientes { get; internal set; }
+        public object Tecnicos { get; internal set; }
     }
 }

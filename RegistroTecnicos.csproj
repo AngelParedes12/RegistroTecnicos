@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Components\Pages\Tickets\TicketsIndex.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Components\Pages\Tickets\TicketsIndex.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Blazor.Bootstrap" Version="3.2.0" />
     <PackageReference Include="Blazored.Toast" Version="4.2.1" />
     <PackageReference Include="bootstrap" Version="5.3.3" />
@@ -24,6 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameWorkCore.sqlite" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
       <PrivateAssets>all</PrivateAssets>
