@@ -1,24 +1,45 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">RegistroTecnicos</a>
+        <a class="navbar-brand" href="/">RegistroTecnicos</a>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" id="menu-toggle" title="Navigation menu" class="navbar-toggler" />
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+<div class="nav-scrollable" onclick="document.getElementById('menu-toggle').checked = false;">
     <nav class="nav flex-column">
+        
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
+            <a class="nav-link" href="/">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+                <span class="visually-hidden">Home</span>
+                Home
+            </a>
         </div>
 
-         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="/Tecnico/Index">
-                <span class="bi bi-person-circle text-center mb-4" aria-hidden="true"></span> T&eacute;cnicos
-            </NavLink>
+        
+        <div class="nav-item px-3">
+            <a class="nav-link" href="/Tecnico/Index">
+                <span class="bi bi-person-circle text-center mb-4" aria-hidden="true"></span>
+                <span class="visually-hidden">Técnicos</span>
+                Técnicos
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link" href="/Cliente/ClienteIndex">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>
+                <span class="visually-hidden">Clientes</span>
+                Clientes
+            </a>
+        </div>
+
+        <div class="nav-item px-3">
+            <a class="nav-link" href="/Tickets/TicketsIndex">
+                <span class="bi bi-ticket-detailed" aria-hidden="true"></span>
+                <span class="visually-hidden">Tickets</span>
+                Tickets
+            </a>
         </div>
     </nav>
 </div>
-

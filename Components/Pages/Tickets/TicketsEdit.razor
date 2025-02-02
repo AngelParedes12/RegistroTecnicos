@@ -1,4 +1,4 @@
-﻿@page "/Ticket/Edit/{ticketId:int}"
+﻿@page "/Ticket/Edit/{ticketsId:int}"
 @inject TicketsService ticketsService
 @inject NavigationManager navigation
 @rendermode InteractiveServer
@@ -39,7 +39,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Descripción:</label>
-                    <textarea class="form-control" @bind="ticket.Descripción"></textarea>
+                    <textarea class="form-control" @bind="ticket.Descripcion"></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Tiempo Invertido:</label>
@@ -68,15 +68,15 @@ else
 
 @code {
     [Parameter]
-    public int ticketId { get; set; }
-    public Ticket ticket { get; set; } = new Ticket();
+    public int ticketsId { get; set; }
+    public Tickets ticket { get; set; } = new Tickets();
     public string Mensaje = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        if (ticketId > 0)
+        if (ticketsId > 0)
         {
-            ticket = await ticketsService.Buscar(ticketId);
+            ticket = await ticketsService.Buscar(ticketsId);
         }
     }
 

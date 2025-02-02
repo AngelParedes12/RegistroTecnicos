@@ -1,5 +1,4 @@
 ﻿@page "/Tickets/TicketsIndex"
-@rendermode InteractiveServer
 @inject TicketsService ticketsService
 @inject NavigationManager navigation
 
@@ -7,10 +6,11 @@
 <div class="container">
 
     <div class="card shadow-lg">
-        @*Header*@ 
+        @* Header *@
         <div class="card-header bg-primary text-white text-center">
             <h3><strong>Tickets</strong></h3>
         </div>
+
         <div class="row p-3">
             <div class="col-md-5">
                 <label for="Filtro" class="form-label"><strong>Filtrar por:</strong></label>
@@ -23,13 +23,14 @@
                     <option value="TecnicoId">TecnicoId</option>
                 </InputSelect>
             </div>
+
             <div class="col-md-7">
                 <label for="ValorFiltro" class="form-label"><strong>Búsqueda:</strong></label>
                 <div class="input-group">
                     <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
                     <button @onclick="Buscar" class="btn btn-primary" type="button">
                         <span class="bi bi-search"></span> Buscar
-                    </button> 
+                    </button>
                 </div>
             </div>
 
@@ -37,7 +38,8 @@
                 <a href="/Tickets/Create" class="btn btn-success bi bi-plus-circle-fill"> Crear</a>
             </div>
         </div>
-        @*Body*@ 
+
+        @* Body *@
         <div class="card-body">
             <table class="table table-bordered text-center">
                 <thead class="bg-primary text-white">
@@ -47,7 +49,7 @@
                         <th>Prioridad</th>
                         <th>ClienteId</th>
                         <th>Asunto</th>
-                        <th>Descripción</th>
+                        <th>Descripcion</th>
                         <th>Tiempo Invertido</th>
                         <th>TecnicoId</th>
                         <th>Modificar</th>
@@ -68,10 +70,10 @@
                             <td>@ticket.TecnicoId</td>
 
                             <td class="text-center">
-                                <a href="/Tickets/Edit/@ticket.TicketId" class="btn btn-secondary bi bi-pencil-fill btn-radius"></a>
+                                <a href="/Tickets/Edit/@ticket.TicketId" class="btn btn-secondary bi bi-pencil-fill"></a>
                             </td>
                             <td class="text-center">
-                                <a href="/Tickets/Delete/@ticket.TicketId" class="btn btn-danger bi bi-trash-fill btn-radius"></a>
+                                <a href="/Tickets/Delete/@ticket.TicketId" class="btn btn-danger bi bi-trash-fill"></a>
                             </td>
                         </tr>
                     }
@@ -82,7 +84,7 @@
 </div>
 
 @code {
-    public List<Ticket> tickets = new List<Ticket>();
+    public List<Tickets> tickets = new List<Tickets>();
     private string filtro = "";
     private string valorFiltro = "";
 

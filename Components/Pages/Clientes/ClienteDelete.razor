@@ -1,0 +1,85 @@
+﻿@page "/Cliente/Delete/{clientesId:int}"
+@inject ClienteService clienteService
+@inject NavigationManager navigation
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar cliente</PageTitle>
+
+@if (cliente != null)
+{
+    <div class="card-header bg-primary text-white text-center">
+        <h3><strong>Eliminar cliente</strong></h3>
+    </div>
+    <div class="container">
+        <div class="card shadow-lg">
+            <div class="card-body">
+                <h5><strong>¿Estás seguro de que quieres eliminar este cliente?</strong></h5>
+                <div class="mb-1">
+                    <p class="mb-0">ClienteId: @cliente.ClienteId</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Fecha de Ingreso: @cliente.FechaIngreso.ToShortDateString()</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Nombres: @cliente.Nombres</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Dirección: @cliente.Direccion</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">RNC: @cliente.Rnc</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Límite de Crédito: @cliente.LimiteCredito</p>
+                </div>
+                <div class="mb-1">
+                    <p class="mb-0">Técnico encargado: @cliente.TecnicoId</p>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a type="button" href="/Cliente/ClienteIndex" class="btn btn-outline-danger">
+                    <span class="bi bi-arrow-bar-left"></span> Volver
+                </a>
+                <button type="button" class="btn btn-danger bi bi-trash-fill" @onclick="Eliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No se encontró ningún cliente con ese ID</p>
+}
+
+<div>@Mensaje</div>
+
+@code {
+    [Parameter]
+    public int clientesId { get; set; }
+    public Clientes cliente { get; set; }
+    public string Mensaje = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (clientesId > 0)
+        {
+            cliente = await clienteService.Buscar(clientesId);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (cliente != null)
+        {
+            var eliminar = await clienteService.Eliminar(clientesId);
+            if (eliminar)
+            {
+                // Redirigir inmediatamente después de eliminar
+                navigation.NavigateTo("/Cliente/ClienteIndex");
+            }
+            else
+            {
+                Mensaje = "Error, el cliente no pudo ser eliminado";
+            }
+        }
+    }
+}
