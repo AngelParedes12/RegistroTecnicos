@@ -82,14 +82,12 @@
             cliente = await clienteService.Buscar(clientesId);
         }
 
-        // Cargar la lista de técnicos (simulada o desde un servicio)
         Tecnicos = await CargarTecnicos();
     }
 
     private async Task<List<Tecnico>> CargarTecnicos()
     {
-        // Aquí podrías llamar a un servicio para obtener los técnicos
-        // Simulación de datos
+
         return await Task.FromResult(new List<Tecnico>
         {
             new Tecnico { Id = 1, Nombre = "Técnico 1" },
