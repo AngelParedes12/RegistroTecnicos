@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RegistroTecnicos.Models;
 
@@ -25,7 +26,8 @@ public class Clientes
     [Range(1, 10000000, ErrorMessage = "El límite de crédito debe estar entre 1 y 10,000,000.")]
     public float LimiteCredito { get; set; }
 
-    [System.ComponentModel.DataAnnotations.Schema.ForeignKey("Técnicoid")]
+    
     public int TecnicoId { get; set; }
+    [ForeignKey ("TecnicoId")]
     public Tecnicos? Tecnico { get; set; }
 }
